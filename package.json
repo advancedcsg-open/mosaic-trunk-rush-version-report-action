@@ -1,0 +1,19 @@
+{
+  "name": "version-report",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/advancedcsg-open/mosaic-trunk-rush-version-report-action.git"
+  },
+  "dependencies": {
+    "@actions/core": "^1.2.7",
+    "aws-sdk": "^2.889.0"
+  }
+}

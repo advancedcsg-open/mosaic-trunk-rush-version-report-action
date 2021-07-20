@@ -1,0 +1,22 @@
+name: 'Mosaic trunk rush version report action'
+description: 'Creates a version report for a Rush project'
+inputs:
+  table-name:
+    description: 'Name of the table that will be storing the reports. Needs to exist.'
+    required: false
+    default: 'rush-version-reports'
+  report-id:
+    description: 'Name of the report. Needs to follow a format of (AZaz-0-9) and be url-readable'
+    required: true
+  repository-name:
+    description: 'Name of the repository'
+    required: true
+  repository-version:
+    description: 'Repository version'
+    required: true
+outputs:
+  version-details:
+    description: 'Project versions'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
