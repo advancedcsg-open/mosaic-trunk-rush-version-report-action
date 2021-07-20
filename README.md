@@ -7,10 +7,6 @@ Creates a version report for a Rush project with a trunk based development appro
 
 **Required** Name of the report. Needs to consist of `digits (0-9)`, `letters(A-Z, a-z)`, separated by `-`.
 
-### `stack`
-
-Name of the stack, like dev or prod. Default `dev`.
-
 ### `table-name`
 
 Name of the table to hold the reports. Default `rush-version-reports`.
@@ -40,7 +36,6 @@ Project versions.
 uses: advancedcsg-open/mosaic-trunk-rush-version-report-action@v1.0
 with:
     report-id: 'sample'
-    stack: 'dev'
     repository-name: 'example-repo/project'
     repository-version: 'v1.0.0'
 ```
