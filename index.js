@@ -34,7 +34,8 @@ async function processVersions(tableName, reportId, repositoryName, repositoryVe
         'repository': repositoryName,
         'version': repositoryVersion,
         'date': date,
-        'projects': projects
+        'projects': {},
+        'repository_projects': projects
     }
 
     let dynamodbItem = {...versionDetails};
