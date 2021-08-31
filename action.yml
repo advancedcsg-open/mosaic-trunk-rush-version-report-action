@@ -15,8 +15,12 @@ inputs:
     description: 'Repository version'
     required: true
   bucket-name:
-    description: 'Name of the S3 bucket to store uploaded cahngelogs'
+    description: 'Name of the S3 Bucket to store changelogs files'
     required: true
+  region:
+    description: 'AWS Region of s3 bucket'
+    required: true
+    default: 'eu-west-2'
 outputs:
   version-details:
     description: 'Project versions'
