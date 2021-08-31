@@ -1,21 +1,22 @@
-const core = require('@actions/core');
+const core = require('@actions/core')
 const AWS = require('aws-sdk')
 const fs = require('fs')
 
-const dynamodb = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
+const dynamodb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2012-08-10' })
+const s3Client = new AWS.S3({ apiVersion: '2012-08-10' });
 
 (async () => {
     try {
-        const repositoryName = core.getInput('repository-name');
-        const repositoryVersion = core.getInput('repository-version');
-        const reportId = core.getInput('report-id');
-        const tableName = core.getInput('table-name');
-
+        const repositoryName = core.getInput('repository-name')
+        const repositoryVersion = core.getInput('repository-version')
+        const reportId = core.getInput('report-id')
+        const tableName = core.getInput('table-name')
+        const BUCKET = core.getInput('bucket-name')
         let versionDetails = await processVersions(tableName, reportId, repositoryName, repositoryVersion)
-
-        core.setOutput("version-details", versionDetails);
+        core.setOutput("version-details", versionDetails)
     } catch (error) {
-        core.setFailed(error.message);
+        console.log(error)
+        core.setFailed(error.message)
     }
 })()
 
@@ -25,34 +26,34 @@ async function processVersions(tableName, reportId, repositoryName, repositoryVe
     let rush = JSON.parse(rushFile)
     let projectLocations = rush["projects"]
     let projects = getProjectVersions(projectLocations)
-
+    let projectsChangeLogs = await uploadChangelogs(projectLocations, repositoryName)
     const date = new Date().toISOString()
 
     console.info(`Repository version: ${repositoryVersion}`)
-
     let versionDetails = {
         'repository': repositoryName,
         'version': repositoryVersion,
         'date': date,
         'projects': {},
-        'repository_projects': projects
+        'repository_projects': projects,
+        'projects_changelogs': projectsChangeLogs
     }
 
-    let dynamodbItem = {...versionDetails};
+    let dynamodbItem = { ...versionDetails }
     dynamodbItem['PK'] = reportId
     dynamodbItem['SK'] = `PROJECTS#${repositoryName}#${repositoryVersion}`
     let params = {
         TableName: tableName,
         Item: dynamodbItem
-    };
+    }
 
     dynamodb.put(params, function (err) {
         if (err) {
             throw err
         } else {
-            console.log("Successfully added version");
+            console.log("Successfully added version")
         }
-    });
+    })
 
     return versionDetails
 }
@@ -63,11 +64,39 @@ function getProjectVersions(projectLocations) {
         let projectFolder = project['projectFolder']
         let projectFileLocation = `${projectFolder}/package.json`
         let projectFile = fs.readFileSync(projectFileLocation)
-        let packageData = JSON.parse(projectFile);
+        let packageData = JSON.parse(projectFile)
         let name = packageData['name']
         let version = packageData['version']
         projects[name] = version
         console.info(`Name: ${name}, version: ${version}`)
     })
+    return projects
+}
+
+async function uploadChangelogs(projectLocations, repositoryName) {
+    projects = {}
+    for (let i = 0; i < projectLocations.length; i++) {
+        const project = projectLocations[i]
+        let projectFolder = project['projectFolder']
+        let name = JSON.parse(fs.readFileSync(`${projectFolder}/package.json`)).name
+        let dirs = fs.readdirSync(projectFolder)
+        let changelogFileLocations = dirs.filter(val => val.startsWith('CHANGELOG.'))
+        projects[name] = []
+        for (let i = 0; i < changelogFileLocations.length; i++) {
+            const changelogFileLocation = `${projectFolder}/${changelogFileLocations[i]}`
+            console.log(changelogFileLocation);
+            if (fs.existsSync(changelogFileLocation)) {
+                await s3Client.putObject({
+                    Bucket: BUCKET,
+                    Key: `changelogs/${repositoryName}/${name}-${changelogFileLocations[i]}`,
+                    Body: fs.readFileSync(changelogFileLocation)
+                }).promise()
+                projects[name].push(`https://${BUCKET}.s3.${REGION}.amazonaws.com/changelogs/${repositoryName}/${name}-${changelogFileLocations[i]}`)
+            }
+            else {
+                console.log(`File does not exsits: ${changelogFileLocation}`)
+            }
+        }
+    }
     return projects
 }
