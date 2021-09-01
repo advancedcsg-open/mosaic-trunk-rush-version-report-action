@@ -40,8 +40,8 @@ async function processVersions(tableName, reportId, repositoryName, repositoryVe
     let versionDetails = {
         'repository': repositoryName,
         'version': repositoryVersion,
-        'date': date,
-        'projects': projects,
+        'projects': {},
+        'repository_projects': projects,
         'projects_changelog': projectsChangeLog
     }
 
