@@ -19,6 +19,14 @@ Name of the repository
 
 Repository version
 
+### `bucket-name`
+
+Name of the bucket to upload changelog files.
+
+### `region`
+
+Region value. Default `eu-west-2`.
+
 ## Outputs
 
 ### `version-details`
@@ -38,4 +46,5 @@ with:
     report-id: 'sample'
     repository-name: 'example-repo/project'
     repository-version: 'v1.0.0'
+    bucket-name: 'example-changelogs-bucket'
 ```
