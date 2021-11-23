@@ -41,8 +41,7 @@ async function processVersions(tableName, reportId, repositoryName, repositoryVe
         'repository': repositoryName,
         'version': repositoryVersion,
         'date': date,
-        'projects': {},
-        'repository_projects': projects,
+        'projects': projects,
         'projects_changelog': projectsChangeLog
     }
 
