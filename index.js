@@ -95,7 +95,7 @@ async function uploadChangelogs(projectLocations, repositoryName) {
                     Key: `changelogs/${repositoryName}/${name}-${changelogFileLocations[i]}`,
                     Body: fs.readFileSync(changelogFileLocation)
                 }).promise()
-                projects[name][changelogFileLocations[i].split('.').pop()] = `https://${BUCKET}.s3.${REGION}.amazonaws.com/changelogs/${repositoryName}/${name}-${changelogFileLocations[i]}`
+                projects[name][changelogFileLocations[i].split('.').pop()] = `https://versions.oneadvanced.io/${BUCKET}.s3.${REGION}.amazonaws.com/changelogs/${repositoryName}/${name}-${changelogFileLocations[i]}`
             }
             else {
                 console.log(`File does not exsits: ${changelogFileLocation}`);
