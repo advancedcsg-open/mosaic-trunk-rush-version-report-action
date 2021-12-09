@@ -27,6 +27,10 @@ Name of the bucket to upload changelog files.
 
 Region value. Default `eu-west-2`.
 
+### `cf-distribution-name`
+
+Name of the cloudfront distribution to access the url
+
 ## Outputs
 
 ### `version-details`
