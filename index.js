@@ -7,6 +7,7 @@ const dynamodb = new AWS.DynamoDB.DocumentClient({apiVersion: '2012-08-10'});
 const s3Client = new AWS.S3({ apiVersion: '2012-08-10' });
 var BUCKET;
 var REGION;
+var cloudfrontDistributionName;
 
 (async () => {
     try {
@@ -16,6 +17,7 @@ var REGION;
         const tableName = core.getInput('table-name');
         BUCKET = core.getInput('bucket-name');
         REGION = core.getInput('region');
+        cloudfrontDistributionName = core.getInput('cf-distribution-name');
 
         let versionDetails = await processVersions(tableName, reportId, repositoryName, repositoryVersion)
 
@@ -95,7 +97,7 @@ async function uploadChangelogs(projectLocations, repositoryName) {
                     Key: `changelogs/${repositoryName}/${name}-${changelogFileLocations[i]}`,
                     Body: fs.readFileSync(changelogFileLocation)
                 }).promise()
-                projects[name][changelogFileLocations[i].split('.').pop()] = `https://${BUCKET}.s3.${REGION}.amazonaws.com/changelogs/${repositoryName}/${name}-${changelogFileLocations[i]}`
+                projects[name][changelogFileLocations[i].split('.').pop()] = `https://${cloudfrontDistributionName}/changelogs/${repositoryName}/${name}-${changelogFileLocations[i]}`
             }
             else {
                 console.log(`File does not exsits: ${changelogFileLocation}`);

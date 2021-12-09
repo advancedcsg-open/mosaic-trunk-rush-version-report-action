@@ -21,6 +21,10 @@ inputs:
     description: 'AWS Region of s3 bucket'
     required: true
     default: 'eu-west-2'
+  cf-distribution-name:
+    description: 'AWS cloudfront distribution name'
+    required: true
+
 outputs:
   version-details:
     description: 'Project versions'
